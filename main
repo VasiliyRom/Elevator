@@ -1,0 +1,108 @@
+import random
+from columnar import columnar
+
+
+class Floor:
+    def __init__(self):
+        def generation(p):
+            rnd = random.randint(0, len(self.floor_passenger) - 1)
+            while rnd == p:
+                rnd = random.randint(0, len(self.floor_passenger) - 1)
+            return rnd
+
+        self.floor_passenger = {a: random.randint(0, 10) for a in range(random.randint(5, 20))}
+        self.floor_pass_exit = self.floor_passenger.copy()
+
+        for i, j in self.floor_passenger.items():
+            if j != 0:
+                self.floor_passenger[i] = [generation(i) for x in range(1, j + 1)]
+            if type(self.floor_passenger[i]) == list:
+                self.floor_passenger[i].sort()
+            elif self.floor_passenger[i] == 0:
+                self.floor_passenger[i] = []
+        self.floor_passenger[0] = []
+        for i in self.floor_pass_exit.keys():
+            self.floor_pass_exit[i] = []
+
+
+
+class Elevator(Floor):
+    lift_inside = list()
+    el_floor_now = 0
+    limit_person = 5
+
+    def __init__(self):
+        super().__init__()
+
+    def up(self):
+        for p, l in self.floor_passenger.items():
+            self.el_floor_now = p
+            self.remove(p)
+            lst_l = list()
+            lst_l.clear()
+            if self.limit_person > len(self.lift_inside):  # add in lift
+                for i in l:
+                    if self.limit_person > len(self.lift_inside):
+                        if i > self.el_floor_now:
+                            self.lift_inside.append(i)
+                        else:
+                            lst_l.append(i)
+                    else:
+                        lst_l.append(i)
+                self.floor_passenger[p] = lst_l
+            self.show_data(p)
+
+    def down(self):
+        for p, l in reversed(self.floor_passenger.items()):
+            self.el_floor_now = p
+            self.remove(p)
+            lst_l = list()
+            lst_l.clear()
+            if self.limit_person > len(self.lift_inside):  # add in lift
+                for i in reversed(l):
+                    if self.limit_person > len(self.lift_inside):
+                        if i < self.el_floor_now:
+                            self.lift_inside.append(i)
+                        else:
+                            lst_l.append(i)
+                    else:
+                        lst_l.append(i)
+                self.floor_passenger[p] = lst_l
+            self.show_data(p, 'DOWN v')
+
+    def remove(self, i):
+        try:
+            lst_l_remove = list()
+            lst_l_remove.clear()
+            for r in self.lift_inside:
+                if r != self.el_floor_now:
+                    lst_l_remove.append(r)
+                else:
+                    self.floor_pass_exit[i].append(r)
+            self.lift_inside = lst_l_remove
+        except IndexError:
+            pass
+
+    def show_data(self, p, i='UP^'):
+        headers = ['PASSENGER EXIT', 'IN ELEVATOR', 'PASSENGER ON FLOOR']
+        data = [[self.floor_pass_exit[p], self.lift_inside, self.floor_passenger[p]]]
+        table = columnar(data, headers, no_borders=True)
+        print(f'\t\t\t\tПоверх {self.el_floor_now} | {i}')
+        print(table)
+
+    def check(self):
+        chek_list = list()
+        chek_list.clear()
+        for i, j in self.floor_passenger.items():
+            if len(j) != 0:
+                chek_list.append(len(j))
+        if len(chek_list) == 0:
+            return False
+        return True
+
+
+if __name__ == '__main__':
+    a = Elevator()
+    while a.check():
+        a.up()
+        a.down()
