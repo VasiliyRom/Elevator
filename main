@@ -25,7 +25,6 @@ class Floor:
             self.floor_pass_exit[i] = []
 
 
-
 class Elevator(Floor):
     lift_inside = list()
     el_floor_now = 0
@@ -40,7 +39,7 @@ class Elevator(Floor):
             self.remove(p)
             lst_l = list()
             lst_l.clear()
-            if self.limit_person > len(self.lift_inside):  # add in lift
+            if self.limit_person > len(self.lift_inside):
                 for i in l:
                     if self.limit_person > len(self.lift_inside):
                         if i > self.el_floor_now:
@@ -58,7 +57,7 @@ class Elevator(Floor):
             self.remove(p)
             lst_l = list()
             lst_l.clear()
-            if self.limit_person > len(self.lift_inside):  # add in lift
+            if self.limit_person > len(self.lift_inside):
                 for i in reversed(l):
                     if self.limit_person > len(self.lift_inside):
                         if i < self.el_floor_now:
@@ -87,16 +86,16 @@ class Elevator(Floor):
         headers = ['PASSENGER EXIT', 'IN ELEVATOR', 'PASSENGER ON FLOOR']
         data = [[self.floor_pass_exit[p], self.lift_inside, self.floor_passenger[p]]]
         table = columnar(data, headers, no_borders=True)
-        print(f'\t\t\t\tПоверх {self.el_floor_now} | {i}')
+        print(f'\t\t\t\tFLOOR {self.el_floor_now} | {i}')
         print(table)
 
     def check(self):
-        chek_list = list()
-        chek_list.clear()
+        check_list = list()
+        check_list.clear()
         for i, j in self.floor_passenger.items():
             if len(j) != 0:
-                chek_list.append(len(j))
-        if len(chek_list) == 0:
+                check_list.append(len(j))
+        if len(check_list) == 0:
             return False
         return True
 
